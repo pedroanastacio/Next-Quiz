@@ -1,0 +1,9 @@
+.wording {
+    display: flex;
+    margin: 10px;
+}
+
+.text {
+    font-size: 2rem;
+    font-weight: 700;
+}
