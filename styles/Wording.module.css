@@ -1,9 +1,16 @@
 .wording {
     display: flex;
-    margin: 10px;
+    margin-bottom: 20px;
 }
 
 .text {
     font-size: 2rem;
     font-weight: 700;
+    text-align: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .text {
+        font-size: 1.2rem;
+    }
 }

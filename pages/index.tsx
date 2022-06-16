@@ -1,42 +1,77 @@
-import React, { useState } from 'react'
-import Question from '../components/Question'
-import AnswerModel from '../model/answer'
+import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import Questionnaire from '../components/Questionnaire'
 import QuestionModel from '../model/question'
-import styles from '../styles/Home.module.css'
 
-const testQuestion = new QuestionModel(1, 'Qual a melhor cor?', [
-  AnswerModel.wrong('Azul'),
-  AnswerModel.wrong('Verde'),
-  AnswerModel.wrong('Vermelho'),
-  AnswerModel.correct('Preto')
-])
+const BASE_URL = 'http://localhost:3000/api'
 
 const Home: React.FC = () => {
 
-  const [question, setQuestion] = useState(testQuestion)
+  const router = useRouter()
 
-  const onResponse = (index: number) => {
-    setQuestion(question.answerWith(index))
+  const [questionsIds, setQuestionsIds] = useState<number[]>([])
+  const [question, setQuestion] = useState<QuestionModel>()
+  const [correctAnswers, setCorrectAnswers] = useState<number>(0)
+
+  const fetchQuestionsIds = async () => {
+    const response = await fetch(`${BASE_URL}/questionnaire`)
+    const questionsIds = await response.json()
+    setQuestionsIds(questionsIds)
   }
 
-  const onTimeout = () => {
-    setQuestion(question.answerWith(-1))
+  const fetchQuestion = async (questionId: number) => {
+    const response = await fetch(`${BASE_URL}/questions/${questionId}`)
+    const questionObj = await response.json()
+    const newQuestion = QuestionModel.fromObject(questionObj)
+    setQuestion(newQuestion)
   }
 
-  return (
-    <div className={styles.container} style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignContent: 'center',
-      height: '100vh'
-    }}>
-      <Question
-        value={question}
-        onResponse={onResponse}
-        onTimeout={onTimeout}
-      />
-    </div>
-  )
+  useEffect(() => {
+    fetchQuestionsIds()
+  }, [])
+
+  useEffect(() => {
+    questionsIds.length > 0 && fetchQuestion(questionsIds[0])
+  }, [questionsIds])
+
+  const answeredQuestion = (answeredQuestion: QuestionModel) => {
+    setQuestion(answeredQuestion)
+    const gotCorrect = answeredQuestion.gotCorrect
+    setCorrectAnswers(correctAnswers + (gotCorrect ? 1 : 0))
+  }
+
+  const getNextQuestionId = (): number => {
+    const nextIndex = questionsIds.indexOf(question.id) + 1
+    return questionsIds[nextIndex]
+  }
+
+  const nextStep = () => {
+    const nextId = getNextQuestionId()
+    nextId ? nextQuestion(nextId) : finish()
+  }
+
+  const nextQuestion = (questionId: number) => {
+    fetchQuestion(questionId)
+  }
+
+  const finish = () => {
+    router.push({
+      pathname: '/result',
+      query: {
+        total: questionsIds.length,
+        correct: correctAnswers
+      }
+    })
+  }
+
+  return question ?
+    <Questionnaire
+      question={question}
+      lastQuestion={getNextQuestionId() === undefined}
+      answeredQuestion={answeredQuestion}
+      nextStep={nextStep}
+    />
+    : <></>
 }
 
 export default Home

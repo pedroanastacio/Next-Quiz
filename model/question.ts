@@ -30,6 +30,10 @@ export default class QuestionModel {
         return this.#gotCorrect
     }
 
+    get notAnswered() {
+        return !this.answered
+    }
+
     get answered() {
         for (let answer of this.#answers) {
             if (answer.revealed) return true
@@ -50,6 +54,11 @@ export default class QuestionModel {
     shuffleAnswers() {
         const shuffledAnswers = shuffle(this.#answers)
         return new QuestionModel(this.#id, this.#wording, shuffledAnswers, this.#gotCorrect)
+    }
+
+    static fromObject(obj: QuestionModel): QuestionModel {
+        const answers = obj.answers.map(answer => AnswerModel.fromObject(answer))
+        return new QuestionModel(obj.id, obj.wording, answers, obj.gotCorrect)
     }
 
     toObject() {

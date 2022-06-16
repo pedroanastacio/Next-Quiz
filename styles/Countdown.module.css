@@ -2,13 +2,31 @@
     display: block;
     margin: 20px auto;
     max-width: 100%;
+    fill: transparent;
 }
 
-.svg-circle-bg {
-    fill: none;
+.circles-container {
+    transform: rotate(-90deg);
+    transform-origin: center;
 }
 
-.svg-circle {
-    fill: none;
+.image-container {
+    transform: rotate(90deg);
+    transform-origin: center;
+}
+
+.svg-remaining-circle {
+    transition: 1s linear all;
+}
+
+.image {
+    filter: invert(18%) sepia(78%) saturate(3436%) hue-rotate(334deg) brightness(115%) contrast(99%);
+    animation: blinker .8s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
 }
 
