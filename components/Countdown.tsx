@@ -17,6 +17,8 @@ const Countdown: React.FC<CountdownProps> = (props) => {
 
   const circleRef = useRef(null)
   const [remaining, setRemaining] = useState<number>(props.duration)
+  const imageWarning = remaining > 10 && remaining < 20 ? styles['image-warning'] : ''
+  const imageDanger = remaining <=10 ? styles['image-danger'] : ''
 
   useEffect(() => {
     if (remaining > 0) {
@@ -38,7 +40,7 @@ const Countdown: React.FC<CountdownProps> = (props) => {
               height={size / 2}
               width={size / 2}
               xlinkHref='https://cdn-icons-png.flaticon.com/512/4611/4611554.png'
-              className={styles.image}
+              className={`${styles.image} ${imageWarning} ${imageDanger}`}
             />
           </g>
         </pattern>

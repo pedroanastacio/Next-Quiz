@@ -21,7 +21,15 @@
 
 .image {
     filter: invert(18%) sepia(78%) saturate(3436%) hue-rotate(334deg) brightness(115%) contrast(99%);
-    animation: blinker .8s linear infinite;
+    animation: blinker 1s linear infinite;
+}
+
+.image.image-warning {
+    animation: blinker .6s linear infinite;
+}
+
+.image.image-danger {
+    animation: blinker .3s linear infinite;
 }
 
 @keyframes blinker {
